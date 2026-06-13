@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: transora
+      POSTGRES_PASSWORD: transora
+      POSTGRES_DB: transora
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://transora:transora@db:5432/transora?schema=public
+      JWT_SECRET: replace-with-a-long-random-secret
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      UPLOAD_DIR: /app/uploads
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads:/app/uploads
+volumes:
+  postgres_data:
+  uploads:
